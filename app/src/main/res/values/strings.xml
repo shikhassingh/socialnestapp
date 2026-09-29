@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">SocialNest Application</string>
+    <!-- OAuth Web client ID (client_type 3). Not the Android client ID. -->
+    <string name="google_web_client_id" translatable="false">229875765407-a32juo5tlncpc1n0e5qhtigjggdosmkc.apps.googleusercontent.com</string>
+</resources>

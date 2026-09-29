@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "502829100539",
+    "project_id": "socialnestapplication",
+    "storage_bucket": "socialnestapplication.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:502829100539:android:1041687c21bb5e64fbef5e",
+        "android_client_info": {
+          "package_name": "com.android.app.socialnestapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "502829100539-2lhpim25fl8cpntkfep7b56o1oefhg06.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.android.app.socialnestapplication",
+            "certificate_hash": "1a99b6fd3dd48a828f7fdf6ae32ebdff8ec6a057"
+          }
+        },
+        {
+          "client_id": "502829100539-5072i8ha041vpovi26t2rqmpp704c0ce.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBr_DzOvBmXsHVxxrESlny17cnV0DmplIs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "502829100539-5072i8ha041vpovi26t2rqmpp704c0ce.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
