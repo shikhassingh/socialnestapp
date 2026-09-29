@@ -5,7 +5,13 @@ import android.util.Log
 import com.android.app.socialnestapplication.domain.model.AuthAccount
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.repository.FirebaseAuthRepository
+import com.google.firebase.FirebaseNetworkException
+import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthException
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +52,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-            throw error
+            throw mapToAuthError(error)
         }
     }
 
@@ -55,7 +61,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-
+            throw mapToAuthError(error)
         }
     }
 
@@ -65,7 +71,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithCredential(credential).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-
+            throw mapToAuthError(error)
         }
     }
 
@@ -74,7 +80,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.sendPasswordResetEmail(email).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-
+            throw mapToAuthError(error)
         }
     }
 
@@ -95,6 +101,18 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
 
     override fun logout() {
         firebaseAuth.signOut()
+    }
+
+    private fun mapToAuthError(error: Exception): AuthError {
+        return when (error) {
+            is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidCredentials
+            is FirebaseAuthInvalidUserException -> AuthError.InvalidCredentials
+            is FirebaseAuthUserCollisionException -> AuthError.EmailAlreadyInUse
+            is FirebaseTooManyRequestsException -> AuthError.TooManyRequests
+            is FirebaseNetworkException -> AuthError.NetworkError
+            is FirebaseAuthException -> AuthError.Unknown(error)
+            else -> AuthError.Unknown(error)
+        }
     }
 
     private companion object {
