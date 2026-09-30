@@ -104,6 +104,18 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
         firebaseAuth.signOut()
     }
 
+    private fun mapToAuthError(error: Exception): AuthError {
+        return when (error) {
+            is FirebaseAuthInvalidCredentialsException -> AuthError.InvalidCredentials
+            is FirebaseAuthInvalidUserException -> AuthError.InvalidCredentials
+            is FirebaseAuthUserCollisionException -> AuthError.EmailAlreadyInUse
+            is FirebaseTooManyRequestsException -> AuthError.TooManyRequests
+            is FirebaseNetworkException -> AuthError.NetworkError
+            is FirebaseAuthException -> AuthError.Unknown(error)
+            else -> AuthError.Unknown(error)
+        }
+    }
+
     private companion object {
         const val TAG = "FirebaseAuthRepository"
     }
