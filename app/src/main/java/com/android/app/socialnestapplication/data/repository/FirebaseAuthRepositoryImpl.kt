@@ -5,6 +5,7 @@ import android.util.Log
 import com.android.app.socialnestapplication.domain.model.AuthAccount
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.repository.FirebaseAuthRepository
+import com.application.android.socialnestapplication.data.mapper.toAuthError
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -52,7 +53,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithEmailAndPassword(email, password).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-            throw mapToAuthError(error)
+            throw error.toAuthError()
         }
     }
 
@@ -61,7 +62,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.createUserWithEmailAndPassword(email, password).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-            throw mapToAuthError(error)
+            throw error.toAuthError()
         }
     }
 
@@ -71,7 +72,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.signInWithCredential(credential).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-            throw mapToAuthError(error)
+            throw error.toAuthError()
         }
     }
 
@@ -80,7 +81,7 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
             firebaseAuth.sendPasswordResetEmail(email).await()
         } catch (error: Exception) {
             if (error is CancellationException) throw error
-            throw mapToAuthError(error)
+            throw error.toAuthError()
         }
     }
 
