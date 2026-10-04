@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,9 +33,11 @@ fun Avatar(
     if (imageUrl.isNullOrBlank()) {
         AvatarInitial(fallbackInitial, description, modifier.size(size))
     } else {
+        val model = parseImageUrl(imageUrl)
         SubcomposeAsyncImage(
-            model = imageUrl,
+            model = model,
             contentDescription = description,
+            contentScale = ContentScale.Crop,
             modifier = modifier.size(size).clip(CircleShape),
             loading = { AvatarInitial(fallbackInitial, description, Modifier.fillMaxSize()) },
             error = { AvatarInitial(fallbackInitial, description, Modifier.fillMaxSize()) },
