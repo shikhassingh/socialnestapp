@@ -25,6 +25,7 @@ retrofit = "2.11.0"
 kotlinxCoroutinesPlayServices = "1.8.1"
 moshiKotlin = "1.15.1"
 converterMoshi = "2.11.0"
+firebaseCrashlyticsBuildtools = "3.0.8"
 
 
 [libraries]
@@ -75,6 +76,7 @@ androidx-material-icons-extended = { group = "androidx.compose.material", name =
 
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 converter-moshi = { module = "com.squareup.retrofit2:converter-moshi", version.ref = "converterMoshi" }
+firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
 
 
 
