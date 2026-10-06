@@ -1,4 +1,4 @@
-package com.application.android.socialnestapplication.presentation.Splash
+package com.android.app.socialnestapplication.presentation.Splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

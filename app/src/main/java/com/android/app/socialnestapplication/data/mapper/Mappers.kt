@@ -1,4 +1,4 @@
-package com.application.android.socialnestapplication.data.mapper
+package com.android.app.socialnestapplication.data.mapper
 
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.model.UserProfile

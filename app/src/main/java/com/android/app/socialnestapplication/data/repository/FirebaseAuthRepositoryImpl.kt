@@ -5,7 +5,7 @@ import android.util.Log
 import com.android.app.socialnestapplication.domain.model.AuthAccount
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.repository.FirebaseAuthRepository
-import com.application.android.socialnestapplication.data.mapper.toAuthError
+import com.android.app.socialnestapplication.data.mapper.toAuthError
 import com.google.firebase.FirebaseNetworkException
 import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
@@ -28,10 +28,8 @@ class FirebaseAuthRepositoryImpl @Inject constructor(
     override fun observeAuthState(): Flow<AuthState> = callbackFlow {
         val listener = FirebaseAuth.AuthStateListener { auth ->
             val user = auth.currentUser
-            trySend(
-                if (user == null) AuthState.Unauthenticated
-                else AuthState.Authenticated(userId = user.uid)
-            )
+            val state = if (user == null) AuthState.Unauthenticated else AuthState.Authenticated(userId = user.uid)
+            trySend(state)
         }
         firebaseAuth.addAuthStateListener(listener)
         awaitClose { firebaseAuth.removeAuthStateListener(listener) }

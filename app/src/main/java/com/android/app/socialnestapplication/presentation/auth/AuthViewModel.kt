@@ -1,6 +1,7 @@
-package com.android.app.socialnestapplication.presentation
+package com.android.app.socialnestapplication.presentation.auth
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.android.app.socialnestapplication.domain.model.AuthError
@@ -9,7 +10,8 @@ import com.android.app.socialnestapplication.domain.repository.FirebaseAuthRepos
 import com.android.app.socialnestapplication.domain.repository.GoogleIdTokenRequester
 import com.android.app.socialnestapplication.domain.repository.UserRepository
 import com.android.app.socialnestapplication.domain.validation.AuthInputValidator
-import com.application.android.socialnestapplication.domain.auth.createProfileOrRollBack
+import com.android.app.socialnestapplication.domain.auth.createProfileOrRollBack
+import com.google.firebase.BuildConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -36,6 +38,7 @@ class AuthViewModel @Inject constructor(
 
     fun clearErrorMessage() = _uiState.update { it.copy(errorMessage = null) }
     fun resetNavigationState() = _uiState.update { it.copy(isAuthenticated = false, returnToLogin = false) }
+    fun resetForm() = _uiState.update { AuthUiState() }
 
     fun onLoginClick() {
         if (_uiState.value.isLoading) return
@@ -48,9 +51,11 @@ class AuthViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
+            if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Login started (Email)")
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             try {
                 authRepository.login(email, current.password)
+                if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Authentication completed (Email)")
                 _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
             } catch (error: CancellationException) {
                 throw error
@@ -82,6 +87,7 @@ class AuthViewModel @Inject constructor(
                 authRepository.register(email, current.password)
                 val uid = authRepository.currentUserId()
                     ?: throw AuthError.Unknown(IllegalStateException("Missing uid after registration"))
+                if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Account created")
                 createProfileOrRollBack(
                     authRepository = authRepository,
                     userRepository = userRepository,
@@ -117,33 +123,40 @@ class AuthViewModel @Inject constructor(
     private suspend fun completeGoogleSignIn(tokenResult: Result<String>) {
         try {
             val idToken = tokenResult.getOrThrow()
+            if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Login started (Google)")
             authRepository.signInWithGoogle(idToken)
+            if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Authentication completed (Google)")
             
             val account = authRepository.currentAccount()
                 ?: throw AuthError.Unknown(IllegalStateException("Missing account after Google sign-in"))
             
-            val existing = try {
-                userRepository.getProfile(account.id)
-            } catch (error: CancellationException) {
-                throw error
-            } catch (error: Exception) {
-                authRepository.logout()
-                throw AuthError.Unknown(error)
-            }
-            
-            if (existing == null) {
-                createProfileOrRollBack(
-                    authRepository = authRepository,
-                    userRepository = userRepository,
-                    profile = UserProfile(
-                        id = account.id,
-                        name = account.displayName.ifBlank { "Member" },
-                        email = account.email
-                    )
-                )
-            }
-            
+            if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Navigation triggered (Google)")
             _uiState.update { it.copy(isLoading = false, isAuthenticated = true) }
+
+            viewModelScope.launch {
+                if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Firestore load started")
+                val existing = try {
+                    userRepository.getProfile(account.id)
+                } catch (error: CancellationException) {
+                    throw error
+                } catch (error: Exception) {
+                    authRepository.logout()
+                    return@launch
+                }
+                if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("AuthViewModel", "Firestore load completed")
+                
+                if (existing == null) {
+                    createProfileOrRollBack(
+                        authRepository = authRepository,
+                        userRepository = userRepository,
+                        profile = UserProfile(
+                            id = account.id,
+                            name = account.displayName.ifBlank { "Member" },
+                            email = account.email
+                        )
+                    )
+                }
+            }
         } catch (error: CancellationException) {
             throw error
         } catch (authError: AuthError) {

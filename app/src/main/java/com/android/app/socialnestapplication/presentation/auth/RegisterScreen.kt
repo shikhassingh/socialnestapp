@@ -1,5 +1,10 @@
-package com.android.app.socialnestapplication.presentation
+package com.android.app.socialnestapplication.presentation.auth
 
+import com.android.app.socialnestapplication.ui.components.PrimaryButton
+import com.android.app.socialnestapplication.ui.components.SecondaryButton
+import com.android.app.socialnestapplication.ui.components.TextField
+import com.android.app.socialnestapplication.ui.components.TopBar
+import com.android.app.socialnestapplication.ui.theme.LocalSpacing
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -28,17 +33,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.android.app.socialnestapplication.ui.components.PrimaryButton
-import com.android.app.socialnestapplication.ui.components.SecondaryButton
-import com.android.app.socialnestapplication.ui.components.TextField
-import com.android.app.socialnestapplication.ui.theme.LocalSpacing
 
 
 @Composable
-fun LoginScreen(
-    onNavigateToRegister: () -> Unit,
-    onNavigateToForgotPassword: () -> Unit,
+fun RegisterScreen(
     onNavigateHome: () -> Unit,
+    onBackToLogin: () -> Unit,
     viewModel: AuthViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -53,6 +53,14 @@ fun LoginScreen(
         }
     }
 
+    LaunchedEffect(uiState.returnToLogin) {
+        if (uiState.returnToLogin) {
+            if (BuildConfig.DEBUG) android.util.if (BuildConfig.DEBUG) Log.d("RegisterScreen", "Navigation to login screen")
+            viewModel.resetNavigationState()
+            onBackToLogin()
+        }
+    }
+
     LaunchedEffect(uiState.errorMessage) {
         uiState.errorMessage?.let { message ->
             snackbarHostState.showSnackbar(message)
@@ -62,7 +70,8 @@ fun LoginScreen(
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
-        containerColor = MaterialTheme.colorScheme.background
+        containerColor = MaterialTheme.colorScheme.background,
+        topBar = { TopBar(title = "Create account", onBackClick = onBackToLogin) }
     ) { innerPadding ->
         Column(
             modifier = Modifier
@@ -70,44 +79,48 @@ fun LoginScreen(
                 .padding(innerPadding)
                 .imePadding()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = spacing.lg, vertical = spacing.xl),
+                .padding(horizontal = spacing.lg, vertical = spacing.md),
             verticalArrangement = Arrangement.spacedBy(spacing.sm),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SocialNestBrandHeader(
-                title = "Welcome back",
-                subtitle = "Sign in with email or Google.",
+                title = "Join SocialNest",
+                subtitle = "Name, email, and password are enough to start.",
                 markSize = 72.dp
+            )
+            TextField(
+                value = uiState.name,
+                onValueChange = viewModel::onNameChange,
+                label = "Name",
+                modifier = Modifier.testTag("register_name")
             )
             TextField(
                 value = uiState.email,
                 onValueChange = viewModel::onEmailChange,
                 label = "Email",
                 keyboardType = KeyboardType.Email,
-                isError = uiState.errorMessage != null,
-                modifier = Modifier.testTag("login_email")
+                isError = uiState.errorMessage != null
             )
             TextField(
                 value = uiState.password,
                 onValueChange = viewModel::onPasswordChange,
                 label = "Password",
+                isPassword = true
+            )
+            TextField(
+                value = uiState.confirmPassword,
+                onValueChange = viewModel::onConfirmPasswordChange,
+                label = "Confirm password",
                 isPassword = true,
                 isError = uiState.errorMessage != null,
-                errorMessage = uiState.errorMessage,
-                modifier = Modifier.testTag("login_password")
+                errorMessage = uiState.errorMessage
             )
-            TextButton(
-                onClick = onNavigateToForgotPassword,
-                modifier = Modifier.align(Alignment.End).testTag("login_forgot")
-            ) {
-                Text("Forgot password?")
-            }
             PrimaryButton(
-                text = "Sign in",
-                onClick = viewModel::onLoginClick,
+                text = "Create account",
+                onClick = viewModel::onRegisterClick,
                 enabled = !uiState.isLoading,
                 loading = uiState.isLoading,
-                modifier = Modifier.testTag("login_submit")
+                modifier = Modifier.testTag("register_submit")
             )
             Row(
                 modifier = Modifier.fillMaxWidth().padding(vertical = spacing.xs),
@@ -125,14 +138,10 @@ fun LoginScreen(
             SecondaryButton(
                 text = "Continue with Google",
                 onClick = { viewModel.onGoogleSignIn(context) },
-                enabled = !uiState.isLoading,
-                modifier = Modifier.testTag("login_google")
+                enabled = !uiState.isLoading
             )
-            TextButton(
-                onClick = onNavigateToRegister,
-                modifier = Modifier.fillMaxWidth().testTag("login_register")
-            ) {
-                Text("New here? Create an account")
+            TextButton(onClick = onBackToLogin, modifier = Modifier.testTag("register_login")) {
+                Text("Already have an account? Log in")
             }
         }
     }
