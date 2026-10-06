@@ -1,4 +1,4 @@
-package com.application.android.socialnestapplication.domain.auth
+package com.android.app.socialnestapplication.domain.auth
 
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.model.UserProfile

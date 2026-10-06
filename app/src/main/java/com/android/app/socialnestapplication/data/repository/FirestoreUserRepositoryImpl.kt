@@ -3,11 +3,11 @@ package com.android.app.socialnestapplication.data.repository
 import android.content.Context
 import android.net.Uri
 import android.util.Log
+import com.android.app.socialnestapplication.data.mapper.toFirestoreMap
+import com.android.app.socialnestapplication.data.mapper.toUserProfileOrNull
 import com.android.app.socialnestapplication.domain.model.AuthError
 import com.android.app.socialnestapplication.domain.model.UserProfile
 import com.android.app.socialnestapplication.domain.repository.UserRepository
-import com.application.android.socialnestapplication.data.mapper.toFirestoreMap
-import com.application.android.socialnestapplication.data.mapper.toUserProfileOrNull
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.firestore.FirebaseFirestore

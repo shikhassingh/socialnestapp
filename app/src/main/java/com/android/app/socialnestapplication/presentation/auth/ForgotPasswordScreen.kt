@@ -1,4 +1,4 @@
-package com.android.app.socialnestapplication.presentation
+package com.android.app.socialnestapplication.presentation.auth
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

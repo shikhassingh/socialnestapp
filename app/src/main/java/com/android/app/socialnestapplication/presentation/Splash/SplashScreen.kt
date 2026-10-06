@@ -1,4 +1,4 @@
-package com.application.android.socialnestapplication.presentation.Splash
+package com.android.app.socialnestapplication.presentation.Splash
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.android.app.socialnestapplication.domain.model.AuthState
-import com.android.app.socialnestapplication.presentation.SocialNestBrandHeader
+import com.android.app.socialnestapplication.ui.components.SocialNestBrandHeader
 import com.android.app.socialnestapplication.ui.theme.LocalSpacing
 import com.android.app.socialnestapplication.ui.theme.SocialNestAccent
 import com.android.app.socialnestapplication.ui.theme.SocialNestBackground
