@@ -32,9 +32,11 @@ fun Avatar(
     if (imageUrl.isNullOrBlank()) {
         AvatarInitial(fallbackInitial, description, modifier.size(size))
     } else {
+        val model = parseImageUrl(imageUrl)
         SubcomposeAsyncImage(
-            model = imageUrl,
+            model = model,
             contentDescription = description,
+            contentScale = ContentScale.Crop,
             modifier = modifier.size(size).clip(CircleShape),
             loading = { AvatarInitial(fallbackInitial, description, Modifier.fillMaxSize()) },
             error = { AvatarInitial(fallbackInitial, description, Modifier.fillMaxSize()) },
